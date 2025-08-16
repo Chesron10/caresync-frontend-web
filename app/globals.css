@@ -14,7 +14,8 @@ body,
   width: 100%;
   @apply text-sm;
   @apply bg-white;
-  @apply text-black;
+  @apply text-gray-900;
+  @apply font-poppins;
 }
 
 @theme {
@@ -52,4 +53,25 @@ body,
   --color-neutral-700: #9a9a9a;
   --color-neutral-800: #777777;
   --color-neutral-900: #5b5b5b;
+}
+
+@layer utilities {
+}
+
+@layer components {
+  .linear-gradient {
+    background: linear-gradient(
+      to right,
+      var(--color-secondary-500),
+      var(--color-primary-500)
+    );
+  }
+
+  .inverse-gradient {
+    background: linear-gradient(
+      to right,
+      var(--color-primary-500),
+      var(--color-secondary-500)
+    );
+  }
 }
