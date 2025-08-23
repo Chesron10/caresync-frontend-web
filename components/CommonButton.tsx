@@ -10,7 +10,7 @@ const CommonButton = ({ title, onClick, className }: props) => {
   return (
     <button
       onClick={onClick}
-      className={`linear-gradient font-semibold font-poppins text-sm hover:inverse-gradient transition-all ease-in text-white rounded-xl ${className}`}
+      className={`linear-gradient cursor-pointer font-poppins hover:inverse-gradient transition-all ease-in text-white rounded-xl ${className}`}
     >
       {title}
     </button>
