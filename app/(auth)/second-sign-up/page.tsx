@@ -1,90 +1,92 @@
 "use client";
-import { doctorAtom } from "@/stores/authStore";
-import { DoctorFirstSchema, doctorFirstSchema } from "@/utils/schemas/schemas";
+import { Doctor, doctorAtom } from "@/stores/authStore";
+import {
+  DoctorSecondSchema,
+  doctorSecondSchema,
+} from "@/utils/schemas/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSetAtom } from "jotai";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
-const SignUp = () => {
+const SecondSignUp = () => {
   const setDoctor = useSetAtom(doctorAtom);
   const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<DoctorFirstSchema>({
-    resolver: zodResolver(doctorFirstSchema),
+  } = useForm<DoctorSecondSchema>({
+    resolver: zodResolver(doctorSecondSchema),
   });
 
-  const onSubmit = (data: DoctorFirstSchema) => {
-    setDoctor((prev) => ({ ...prev, ...data }));
-    router.push("/second-sign-up");
+  const onSubmit = (data: DoctorSecondSchema) => {
+    setDoctor((prev) =>
+      prev ? { ...prev, ...data } : ({ ...data } as Doctor)
+    );
+    router.push("/third-sign-up");
   };
 
   return (
     <main className="bg-white flex-1 h-screen w-full p-20 flex items-center flex-col rounded-l-[100px]">
-      <h1 className="font-semibold font-poppins mt-10 text-4xl text-gray-700">
-        Sign Up
-      </h1>
       <Image
         src={"/icons/Logo.png"}
         alt="logo"
         width={100}
         height={100}
-        className="mt-10"
+        className="mt-20"
       />
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-10">
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-20">
         <div className="flex flex-col">
-          <label className="text-sm text-gray-600 ">First name</label>
+          <label className="text-sm text-gray-600 ">Specialisation</label>
           <input
             type="text"
-            {...register("firstName")}
-            placeholder="eg. Cheseed Sharon"
+            {...register("specialisation")}
+            placeholder="eg. Pharmacist"
             autoCapitalize="words"
             className="border outline-none p-3 mt-2 focus:border-secondary-500 rounded-xl w-96 text-sm text-gray-600 border-gray-300"
           />
-          {errors?.firstName && (
+          {errors?.specialisation && (
             <p className="text-xs mt-1 text-red-600">
-              {errors.firstName.message}
+              {errors.specialisation.message}
             </p>
           )}
         </div>
         <div className="flex flex-col mt-3">
-          <label className="text-sm text-gray-600 ">Last name</label>
+          <label className="text-sm text-gray-600 ">
+            Hospital/Clinic Affiliation
+          </label>
           <input
             type="text"
-            {...register("lastName")}
-            placeholder="eg. Bangura"
+            {...register("affiliation")}
+            placeholder="eg. Connaught"
             autoCapitalize="words"
             className="border outline-none p-3 mt-2 focus:border-secondary-500 rounded-xl w-96 text-sm text-gray-600 border-gray-300"
           />
-          {errors?.lastName && (
+          {errors?.affiliation && (
             <p className="text-xs mt-1 text-red-600">
-              {errors.lastName.message}
+              {errors.affiliation.message}
             </p>
           )}
         </div>
         <div className="flex flex-col mt-3">
-          <label className="text-sm text-gray-600 ">Phone number</label>
+          <label className="text-sm text-gray-600 ">Gender</label>
           <input
             type="text"
-            placeholder="eg. 78 111222"
-            {...register("phoneNumber")}
+            placeholder="eg. Male"
+            {...register("gender")}
             className="border outline-none p-3 mt-2 focus:border-secondary-500 rounded-xl w-96 text-sm text-gray-600 border-gray-300"
           />
-          {errors.phoneNumber && (
-            <p className="text-xs mt-1 text-red-600">
-              {errors.phoneNumber.message}
-            </p>
+          {errors.gender && (
+            <p className="text-xs mt-1 text-red-600">{errors.gender.message}</p>
           )}
         </div>
         <button
           type="submit"
-          // onClick={() => router.push("/second-sign-up")}
-          className="linear-gradient py-4 px-10 text-white font-base font-semibold mt-20 rounded-xl w-full"
+          // onClick={() => console.log(doctor)}
+          className="linear-gradient py-4 px-10 text-white font-base font-semibold mt-28 rounded-xl w-full"
         >
           Next
         </button>
@@ -93,4 +95,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default SecondSignUp;

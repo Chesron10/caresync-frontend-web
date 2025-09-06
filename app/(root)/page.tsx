@@ -2,16 +2,54 @@
 
 import AuthNavBar from "@/components/AuthNavBar";
 import CommonButton from "@/components/CommonButton";
+import {
+  isAuthenticatedAtom,
+  isLoadingAtom,
+  useGetDoctor,
+  userAtom,
+} from "@/stores/authStore";
+import { useAtom, useSetAtom } from "jotai";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Home() {
+  const [user, setUser] = useAtom(userAtom);
+  const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
   const router = useRouter();
+  const setIsAuthenticated = useSetAtom(isAuthenticatedAtom);
+  const { data, isPending, error } = useGetDoctor(user?.id);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsAuthenticated(true);
+      router.replace("/dashboard");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isPending) {
+      setIsLoading(true);
+    } else {
+      setIsLoading(false);
+    }
+
+    if (error) {
+      console.error("Error fetching doctor:", error);
+    }
+
+    if (data) {
+      console.log(data);
+      setUser({ ...data.safeUser });
+    }
+  }, [isPending, error, data, setIsLoading, setUser]);
+
   return (
-    <main className="bg-white flex flex-col w-full min-h-screen">
+    <main className="bg-white flex flex-col w-full min-h-screen hide-scrollbar">
       <AuthNavBar />
-      <div className="w-full flex pt-28 h-screen">
+      <div className="w-full flex pt-28 h-screen ">
         <div className="w-[60%] px-32 py-52">
           <h1 className="text-6xl">
             Your Health,{" "}
@@ -157,6 +195,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <div className="h-[500px] w-full bg-primary-700"></div>
     </main>
   );
 }

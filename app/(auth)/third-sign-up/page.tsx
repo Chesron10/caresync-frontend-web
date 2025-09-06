@@ -1,36 +1,55 @@
 "use client";
-import { loginSchema, LoginSchema } from "@/utils/schemas/schemas";
+import { Doctor, doctorAtom, useSignUp } from "@/stores/authStore";
+import { DoctorThirdSchema, doctorThirdSchema } from "@/utils/schemas/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAtom } from "jotai";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
-const SignIn = () => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+const ThirdSignUp = () => {
+  const [doctor, setDoctor] = useAtom(doctorAtom);
   const router = useRouter();
+  const mutation = useSignUp(() => router.replace("/verification"));
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginSchema>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<DoctorThirdSchema>({
+    resolver: zodResolver(doctorThirdSchema),
   });
 
-  const onSubmit = (data: LoginSchema) => {
-    console.log(data);
-    router.push("/sign-in");
+  const onSubmit = async (data: DoctorThirdSchema) => {
+    const formData = new FormData();
+    formData.append("firstName", doctor?.firstName || "");
+    formData.append("lastName", doctor?.lastName || "");
+    formData.append("email", data?.email || "");
+    formData.append("password", data?.password || "");
+    formData.append("phoneNumber", doctor?.phoneNumber || "");
+    formData.append("gender", doctor?.gender || "");
+    formData.append("specialisation", doctor?.specialisation || "");
+    formData.append("affiliation", doctor?.affiliation || "");
+    if (selectedFile) {
+      formData.append("profileImage", selectedFile);
+    }
+
+    mutation.mutate(formData);
   };
 
   return (
     <main className="bg-white flex-1 h-screen w-full p-20 flex items-center flex-col rounded-l-[100px]">
-      <h1 className="font-semibold font-poppins mt-10 text-4xl text-gray-700">
-        Sign In
-      </h1>
-
+      <Image
+        src={"/icons/Logo.png"}
+        alt="logo"
+        width={100}
+        height={100}
+        className="mt-20"
+      />
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="mt-20 items-center flex flex-col"
+        className="mt-10 items-center flex flex-col"
       >
         <div className="w-28 h-28 border-6 relative bg-gray-200 border-gray-300 rounded-full">
           {selectedFile && (
@@ -46,7 +65,6 @@ const SignIn = () => {
             type="file"
             id="upload-image"
             accept="image/*"
-            {...register("profileImage")}
             onChange={(e) => {
               setSelectedFile(e.target.files ? e.target.files[0] : null);
             }}
@@ -80,7 +98,7 @@ const SignIn = () => {
         <div className="flex flex-col mt-3">
           <label className="text-sm text-gray-600 ">Password</label>
           <input
-            type="text"
+            type="password"
             {...register("password")}
             placeholder="********"
             autoCapitalize="words"
@@ -93,15 +111,15 @@ const SignIn = () => {
           )}
         </div>
         <button
-          // type="submit"
-          onClick={() => router.push("/dashboard")}
-          className="linear-gradient py-4 px-10 text-white font-base font-semibold mt-32 rounded-xl w-full"
+          type="submit"
+          // onClick={() => router.push("/verification")}
+          className="linear-gradient py-4 px-10 text-white cursor-pointer font-base font-semibold mt-20 rounded-xl w-full"
         >
-          Sign In
+          Sign Up
         </button>
       </form>
     </main>
   );
 };
 
-export default SignIn;
+export default ThirdSignUp;
